@@ -1,0 +1,62 @@
+{
+	"pluginAlias": "Onkyo",
+	"pluginType": "platform",
+	"schema": {
+		"type": "object",
+		"properties": {
+			"name": {
+				"title": "Name",
+				"type": "string",
+				"required": true,
+				"default": "Onkyo Stereo"
+			},
+			"ip_address": {
+				"title": "IP-Address or hostname",
+				"type": "string",
+				"required": true,
+				"default": "10.0.1.23"
+			},
+			"model": {
+				"title": "Model",
+				"type": "string",
+				"required": true,
+				"default": "TX-NR609"
+			},
+			"poll_status_interval": {
+				"title": "Polling interval (0 for no polling)",
+				"type": "string",
+				"required": false,
+				"default": "0"
+			},
+			"default_input": {
+				"title": "Default input (optional)",
+				"type": "string",
+				"required": false,
+				"default": "net"
+			},
+			"default_volume": {
+				"title": "Default volume (optional)",
+				"type": "string",
+				"required": false,
+				"default": "10"
+			},
+			"max_volume": {
+				"title": "Maximum volume (optional)",
+				"type": "string",
+				"required": false,
+				"default": "35"
+			},
+			"map_volume_100": {
+				"title": "Map Volume (optional)",
+				"type": "boolean",
+				"default": false,
+				"description": "Will remap the volume percentages that appear in the Home app so that the configured max_volume will appear as 100% in the Home app. For example, if the max_volume is 30, then setting the volume slider to 50% would set the receiver's actual volume to 15. Adjusting the stereo volume knob to 35 will appear as 100% in the Home app. This option could confuse some users to it defaults to off false, but it does give the user finer volume control especially when sliding volume up and down in the Home app."
+			},
+			"zone": {
+				"title": "Zone",
+				"type": "string",
+				"enum": [ "main", "zone2" ]
+			}
+	    }
+    }
+}
