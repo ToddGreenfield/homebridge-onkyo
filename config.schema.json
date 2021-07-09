@@ -443,17 +443,17 @@
                             "description": "Limit volume of receiver to this number when controlling in HomeKit.",
                             "default": 30
                         },
-                        "volume_dimmer": {
-                            "type": "boolean",
-                            "title": "Show Volume as a Dimmer",
-                            "description": "Whether or not to show receiver volume as a linked light dimmer. Convenient for quick volume changes but Siri thinks it's a light source.",
-                            "default": false
-                        },
-                        "volume_speed": {
-                            "type": "boolean",
-                            "title": "Show Volume as a Fan Speed",
-                            "description": "Whether or not to show receiver volume as a linked Fan with Speed control. Convenient for quick volume changes but Siri thinks it's a Fan.",
-                            "default": false
+                        "volume_type": {
+                            "type": "string",
+                            "default": "none",
+                            "title": "Show Volume as a Light Dimmer or as a Fan Speed",
+                            "description": "Whether or not to show receiver volume as a linked light dimmer or as a fan speed. Convenient for quick volume changes but Siri thinks it's a light or fan source.",
+                            "oneOf": [
+                              { "title": "Light Dimmer", "enum": ["dimmer"] },
+                              { "title": "Fan Speed", "enum": ["speed"] },
+                              { "title": "None", "enum": ["none"] }
+                            ],
+                            "required": true
                         },
                         "map_volume_100": {
                             "type": "boolean",

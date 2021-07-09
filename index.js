@@ -65,20 +65,12 @@ class OnkyoAccessory {
 		this.zone = (this.config.zone || 'main').toLowerCase();
 		this.log.debug('Zone %s', this.zone);
 
-		if (this.config.volume_dimmer === undefined) {
-			this.log.error('ERROR: Your configuration is missing the parameter "volume_dimmer". Assuming "false".');
-			this.volume_dimmer = false;
+		if (this.config.volume_type === undefined) {
+			this.log.error('ERROR: Your configuration is missing the parameter "volume_type". Assuming "none".');
+			this.volume_type = 'none';
 		} else {
-			this.volume_dimmer = this.config.volume_dimmer;
-			this.log.debug('volume_dimmer: %s', this.volume_dimmer);
-		}
-
-		if (this.config.volume_speed === undefined) {
-			this.log.error('ERROR: Your configuration is missing the parameter "volume_speed". Assuming "false".');
-			this.volume_speed = false;
-		} else {
-			this.volume_speed = this.config.volume_speed;
-			this.log.debug('volume_speed: %s', this.volume_speed);
+			this.volume_type = this.config.volume_type;
+			this.log.debug('volume_type: %s', this.volume_type);
 		}
 
 		if (this.config.filter_inputs === undefined) {
@@ -165,14 +157,9 @@ class OnkyoAccessory {
 		this.tvService = this.createTvService(this.accessory);
 		this.createTvSpeakerService(this.tvService);
 		this.addSources(this.tvService);
-		if (this.volume_dimmer) {
+		if (this.volume_type) {
 			this.log.debug('Creating Dimmer service linked to TV for receiver %s', this.name);
-			this.createVolumeDimmer(this.tvService);
-		}
-
-		if (this.volume_speed) {
-			this.log.debug('Creating Speed service linked to TV for receiver %s', this.name);
-			this.createVolumeSpeed(this.tvService);
+			this.createVolumeType(this.tvService);
 		}
 
 		this.platform.api.publishExternalAccessories('homebridge-onkyo', [this.accessory]);
@@ -867,9 +854,10 @@ class OnkyoAccessory {
 		return informationService;
 	}
 
-	createVolumeDimmer(service) {
-		this.dimmer = this.accessory.addService(Service.Lightbulb, this.name + ' Volume', 'dimmer');
-		this.dimmer
+	createVolumeType(service) {
+		if (this.volume_type === 'dimmer') {
+			this.dimmer = this.accessory.addService(Service.Lightbulb, this.name + ' Volume', 'dimmer');
+			this.dimmer
 			.getCharacteristic(Characteristic.On)
 			// Inverted logic taken from https://github.com/langovoi/homebridge-upnp
 			.on('get', callback => {
@@ -883,17 +871,15 @@ class OnkyoAccessory {
 				});
 			})
 			.on('set', (value, callback) => this.setMuteState(!value, callback));
-		this.dimmer
+			this.dimmer
 			.addCharacteristic(Characteristic.Brightness)
 			.on('get', this.getVolumeState.bind(this))
 			.on('set', this.setVolumeState.bind(this));
 
 		service.addLinkedService(this.dimmer);
-	}
-
-	createVolumeSpeed(service) {
-		this.speed = this.accessory.addService(Service.Fan, this.name + ' Volume', 'speed');
-		this.speed
+		} else if (this.volume_type === 'speed') {
+			this.speed = this.accessory.addService(Service.Fan, this.name + ' Volume', 'speed');
+			this.speed
 			.getCharacteristic(Characteristic.On)
 			// Inverted logic taken from https://github.com/langovoi/homebridge-upnp
 			.on('get', callback => {
@@ -907,12 +893,13 @@ class OnkyoAccessory {
 				});
 			})
 			.on('set', (value, callback) => this.setMuteState(!value, callback));
-		this.speed
+			this.speed
 			.addCharacteristic(Characteristic.RotationSpeed)
 			.on('get', this.getVolumeState.bind(this))
 			.on('set', this.setVolumeState.bind(this));
 
 		service.addLinkedService(this.speed);
+		}
 	}
 
 	createTvService(accessory) {
